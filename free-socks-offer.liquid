@@ -1,0 +1,595 @@
+{% comment %}FREE SOCKS GIFT OFFER — free-socks-offer.liquid{% endcomment %}
+
+<div id="free-socks-offer-root"></div>
+
+<div id="fso-modal" style="display:none;">
+  <div id="fso-modal-overlay"></div>
+  <div id="fso-modal-box">
+    <button id="fso-modal-close">✕</button>
+    <div id="fso-modal-title">🧦 Choose Your Free Socks</div>
+    <div id="fso-modal-sub">Pick your size and color — on us!</div>
+    <div class="fso-label">Size</div>
+    <div class="fso-options" id="fso-sizes">
+      <button class="fso-opt" data-size="S">S</button>
+      <button class="fso-opt" data-size="M">M</button>
+      <button class="fso-opt" data-size="L">L</button>
+      <button class="fso-opt" data-size="XL">XL</button>
+    </div>
+    <div class="fso-label">Color</div>
+    <div class="fso-options" id="fso-colors">
+      <button class="fso-opt fso-color" data-color="Red">
+        <span class="fso-swatch" style="background:#e53935;"></span> Red
+      </button>
+      <button class="fso-opt fso-color" data-color="White">
+        <span class="fso-swatch" style="background:#f5f5f5;border:1px solid #ccc;"></span> White
+      </button>
+      <button class="fso-opt fso-color" data-color="Black">
+        <span class="fso-swatch" style="background:#212121;"></span> Black
+      </button>
+    </div>
+    <button id="fso-confirm-btn" disabled>Select size & color to continue</button>
+    <div id="fso-modal-badge" style="display:none;">✅ Free socks added to your cart!</div>
+  </div>
+</div>
+
+<style>
+  #free-socks-banner{
+    display:none;position:fixed;bottom:15%;left:50%;transform:translateX(-50%);
+    z-index:9998;width:calc(100% - 32px);max-width:460px;
+    background:#1a1a1a;color:#fff;border-radius:16px;padding:16px 20px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.35);font-family:Arial,sans-serif;
+    animation:fsoSlide 0.4s ease;
+  }
+  @keyframes fsoSlide{
+    from{opacity:0;transform:translateX(-50%) translateY(20px);}
+    to{opacity:1;transform:translateX(-50%) translateY(0);}
+  }
+  #free-socks-banner .fso-title{font-size:16px;font-weight:700;color:#FFD700;margin-bottom:4px;}
+  #free-socks-banner .fso-sub{font-size:13px;color:#ccc;margin-bottom:12px;}
+  #free-socks-banner .fso-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  #free-socks-banner .fso-timer-label{font-size:11px;color:#aaa;}
+  #free-socks-banner .fso-timer{
+    background:#FF4444;color:#fff;font-size:15px;font-weight:800;
+    padding:4px 10px;border-radius:8px;letter-spacing:1px;
+    font-variant-numeric:tabular-nums;min-width:76px;text-align:center;
+  }
+  #free-socks-banner .fso-btn{
+    background:#FFD700;color:#1a1a1a;border:none;border-radius:10px;
+    padding:9px 16px;font-size:14px;font-weight:700;cursor:pointer;
+    white-space:nowrap;transition:opacity 0.2s;
+  }
+  #free-socks-banner .fso-btn:hover{opacity:0.85;}
+  #free-socks-banner .fso-btn:disabled{background:#555;color:#aaa;cursor:default;}
+  #free-socks-banner .fso-close{
+    position:absolute;top:10px;right:12px;
+    background:none;border:none;color:#777;font-size:17px;cursor:pointer;
+  }
+  #free-socks-banner .fso-badge{
+    display:none;background:#2ecc71;color:#fff;border-radius:8px;
+    padding:6px 12px;font-size:13px;font-weight:700;text-align:center;margin-top:10px;
+  }
+  #fso-progress-wrap{
+    display:none;font-family:Arial,sans-serif;
+    padding:10px 14px;background:#fff8e1;border:1px solid #ffe082;
+    border-radius:12px;margin:12px 0;
+  }
+  #fso-progress-wrap .fso-prog-text{font-size:13px;color:#555;margin-bottom:6px;}
+  #fso-progress-wrap .fso-prog-text strong{color:#e65100;}
+  #fso-progress-wrap .fso-bar-bg{background:#ffe082;border-radius:6px;height:7px;overflow:hidden;}
+  #fso-progress-wrap .fso-bar-fill{
+    background:linear-gradient(90deg,#FFB300,#FF6F00);
+    height:100%;border-radius:6px;transition:width 0.4s ease;width:0%;
+  }
+  #fso-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;}
+  #fso-modal-box{
+    position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+    z-index:10000;background:#fff;border-radius:20px;
+    padding:28px 24px;width:calc(100% - 40px);max-width:380px;
+    font-family:Arial,sans-serif;box-shadow:0 12px 48px rgba(0,0,0,0.25);
+    animation:fsoModalIn 0.3s ease;
+  }
+  @keyframes fsoModalIn{
+    from{opacity:0;transform:translate(-50%,-44%);}
+    to{opacity:1;transform:translate(-50%,-50%);}
+  }
+  #fso-modal-close{position:absolute;top:12px;right:14px;background:none;border:none;font-size:18px;color:#999;cursor:pointer;}
+  #fso-modal-title{font-size:18px;font-weight:700;color:#1a1a1a;margin-bottom:4px;}
+  #fso-modal-sub{font-size:13px;color:#888;margin-bottom:20px;}
+  .fso-label{font-size:12px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+  .fso-options{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+  .fso-opt{
+    padding:8px 16px;border:2px solid #ddd;border-radius:10px;
+    font-size:14px;font-weight:600;background:#61757E;color:#fff;cursor:pointer;
+    transition:all 0.15s;display:flex;align-items:center;gap:6px;
+  }
+  .fso-opt:hover{border-color:#1a1a1a;}
+  .fso-opt.selected{border-color:#1a1a1a;background:#1a1a1a;color:#fff;}
+  .fso-opt.selected .fso-swatch{opacity:1;}
+  /* ── Hide +/- on gift cart item ── */
+  [data-fso-gift] .quantity,
+  [data-fso-gift] .quantity__button,
+  [data-fso-gift] .quantity-selector,
+  [data-fso-gift] .quantity-selector__button,
+  [data-fso-gift] .cart-item__quantity,
+  [data-fso-gift] .cart-item__quantity-wrapper,
+  [data-fso-gift] quantity-input,
+  [data-fso-gift] .js-qty__adjust,
+  [data-fso-gift] input[type="number"],
+  [data-fso-gift] button[name="minus"],
+  [data-fso-gift] button[name="plus"],
+  [data-fso-gift] [data-quantity-minus],
+  [data-fso-gift] [data-quantity-plus],
+  [data-fso-gift] [data-quantity-input]{ display:none !important; }
+  .fso-swatch{width:14px;height:14px;border-radius:50%;display:inline-block;flex-shrink:0;}
+  #fso-confirm-btn{
+    width:100%;padding:13px;background:#1a1a1a;color:#FFD700;
+    border:none;border-radius:12px;font-size:15px;font-weight:700;
+    cursor:pointer;transition:opacity 0.2s;margin-top:4px;
+  }
+  #fso-confirm-btn:hover:not(:disabled){opacity:0.85;}
+  #fso-confirm-btn:disabled{background:#eee;color:#999;cursor:default;}
+  #fso-modal-badge{
+    margin-top:12px;background:#2ecc71;color:#fff;border-radius:10px;
+    padding:10px;font-size:14px;font-weight:700;text-align:center;
+  }
+</style>
+
+<script>
+(function(){
+  var VARIANTS={
+    'S/Red':52112079782199,'S/White':52112082993463,'S/Black':52112083583287,
+    'M/Red':52112079814967,'M/White':52112083026231,'M/Black':52112083616055,
+    'L/Red':52112079847735,'L/White':52112083058999,'L/Black':52112083648823,
+    'XL/Red':52112079880503,'XL/White':52112083091767,'XL/Black':52112083681591
+  };
+  var ALL_IDS=Object.values(VARIANTS).map(String);
+
+  var C={MIN_VALUE:10,OFFER_HOURS:3,CURRENCY:'KD',CART_SELECTOR:'.cart-items, #cart, form[action="/cart"]'};
+  var OFFER_MS=C.OFFER_HOURS*3600000;
+  var LS_START='fso_start_v1', LS_ADDED='fso_added_v1';
+  var timerInt=null, active=false, dismissed=false;
+
+  /* ── Cache gift item key for interceptor ── */
+  var giftItemKey = null;
+  function updateGiftKey(){
+    getCart(function(cart){
+      if(!cart) return;
+      giftItemKey = null;
+      for(var i=0;i<cart.items.length;i++){
+        if(ALL_IDS.indexOf(String(cart.items[i].variant_id))>-1){
+          giftItemKey = cart.items[i].key;
+          break;
+        }
+      }
+    });
+  }
+
+  /* ── Intercept fetch BEFORE sending — block qty > 1 for gift ── */
+  var _origFetch = window.fetch;
+  window.fetch = function(resource, init) {
+    var url = typeof resource === 'string' ? resource : (resource && resource.url ? resource.url : '');
+
+    // Intercept /cart/change.js before it goes out
+    if(giftItemKey && init && init.body && url.indexOf('/cart/change') > -1){
+      var bodyStr = typeof init.body === 'string' ? init.body : '';
+
+      // URL-encoded: id=KEY&quantity=N
+      if(bodyStr.indexOf(giftItemKey) > -1){
+        // force quantity to 1
+        bodyStr = bodyStr.replace(/quantity=([2-9]|\d{2,})/, 'quantity=1');
+        init = Object.assign({}, init, {body: bodyStr});
+        resource = typeof resource === 'string' ? resource : resource;
+      }
+
+      // JSON body: {"id":"KEY","quantity":N}
+      if(bodyStr.indexOf('{') === 0){
+        try{
+          var parsed = JSON.parse(bodyStr);
+          if(String(parsed.id).indexOf(giftItemKey) > -1 && parsed.quantity > 1){
+            parsed.quantity = 1;
+            init = Object.assign({}, init, {body: JSON.stringify(parsed)});
+          }
+        }catch(e){}
+      }
+    }
+
+    // Intercept /cart/update.js (updates by line number array)
+    if(url.indexOf('/cart/update') > -1 && init && init.body){
+      // After update, re-lock gift qty
+      var result = _origFetch.call(this, resource, init);
+      result.then(function(res){
+        res.clone().json().then(function(data){
+          var items = data.items||[];
+          for(var i=0;i<items.length;i++){
+            if(ALL_IDS.indexOf(String(items[i].variant_id))>-1 && items[i].quantity>1){
+              _origFetch('/cart/change.js',{
+                method:'POST',
+                headers:{'Content-Type':'application/x-www-form-urlencoded'},
+                body:'id='+items[i].key+'&quantity=1'
+              }).then(function(){ updateGiftKey(); refreshCartUI(); });
+              break;
+            }
+          }
+        }).catch(function(){});
+      }).catch(function(){});
+      return result;
+    }
+
+    return _origFetch.call(this, resource, init);
+  };
+
+  var getStart = function(){ return parseInt(localStorage.getItem(LS_START)||'0'); };
+  var setStart = function(){ if(!getStart()) localStorage.setItem(LS_START,Date.now()); };
+  var expired  = function(){ return getStart()&&(Date.now()-getStart())>=OFFER_MS; };
+  var timeLeft = function(){ return Math.max(0,OFFER_MS-(Date.now()-getStart())); };
+  var wasAdded = function(){ return localStorage.getItem(LS_ADDED)==='1'; };
+  var markAdded= function(){ localStorage.setItem(LS_ADDED,'1'); };
+  var clearAdded=function(){ localStorage.removeItem(LS_ADDED); };
+
+  function fmt(ms){
+    var s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;
+    return p(h)+':'+p(m)+':'+p(sec);
+  }
+  function p(n){ return n<10?'0'+n:n; }
+
+  function getCart(cb){
+    fetch('/cart.js').then(function(r){return r.json();}).then(cb).catch(function(){cb(null);});
+  }
+
+  /* ── Refresh cart UI (works with most themes) ── */
+  function refreshCartUI(){
+    document.dispatchEvent(new CustomEvent('cart:refresh'));
+    document.dispatchEvent(new CustomEvent('cart:updated'));
+
+    var sectionIds = ['cart-drawer','cart-notification','cart-icon-bubble','cart-live-region-text'];
+    var params = sectionIds.map(function(s){ return 'sections[]='+s; }).join('&');
+    fetch('/cart.js?'+params+'&t='+Date.now())
+      .then(function(r){ return r.json(); })
+      .then(function(){
+        document.dispatchEvent(new CustomEvent('shopify:section:load'));
+        setTimeout(function(){updateGiftKey();hideGiftControls();}, 300); // mark after DOM updates
+      }).catch(function(){});
+
+    fetch('/cart.js').then(function(r){return r.json();}).then(function(cart){
+      var count=cart.item_count;
+      document.querySelectorAll('[data-cart-count],[data-cart-item-count],.cart-count,.cart__count').forEach(function(el){
+        el.textContent=count;
+        if(count>0) el.removeAttribute('hidden');
+      });
+      setTimeout(function(){updateGiftKey();hideGiftControls();}, 500);
+    }).catch(function(){});
+  }
+
+  /* ── Lock qty to 1 ── */
+  function lockGiftQty(cart){
+    if(!cart) return;
+    for(var i=0;i<cart.items.length;i++){
+      var item=cart.items[i];
+      if(ALL_IDS.indexOf(String(item.variant_id))>-1 && item.quantity>1){
+        fetch('/cart/change.js',{
+          method:'POST',
+          headers:{'Content-Type':'application/x-www-form-urlencoded'},
+          body:'id='+item.key+'&quantity=1'
+        }).then(function(){ refreshCartUI(); });
+      }
+    }
+  }
+
+  /* ── Mark gift item in DOM to hide its +/- controls ── */
+  function markGiftInDOM(){
+    // Try multiple selectors used by different Shopify themes
+    var rows = document.querySelectorAll(
+      '.cart-item, .cart__item, [data-cart-item], tr.cart-item, '+
+      '.cart-drawer__item, .mini-cart__item, [data-line-item]'
+    );
+    rows.forEach(function(row){
+      // Check for gift variant ID in any link, input, or data attribute
+      var found = false;
+      ALL_IDS.forEach(function(vid){
+        if(row.innerHTML.indexOf(vid) > -1) found = true;
+        if(row.getAttribute('data-variant-id') === vid) found = true;
+      });
+      // Also check product handle
+      if(row.innerHTML.indexOf('free-socks') > -1) found = true;
+      if(found){
+        row.setAttribute('data-fso-gift','1');
+        // Also show a "Gift 🎁" label instead of qty controls
+        var qtyEl = row.querySelector('.quantity, .quantity-selector, .cart-item__quantity, quantity-input');
+        if(qtyEl && !row.querySelector('.fso-gift-label')){
+          var label = document.createElement('span');
+          label.className = 'fso-gift-label';
+          label.textContent = '🎁 Free Gift';
+          label.style.cssText = 'font-size:12px;font-weight:700;color:#2ecc71;';
+          qtyEl.parentNode.insertBefore(label, qtyEl);
+        }
+      }
+    });
+  }
+
+  /* ── Check if gift is still in cart ── */
+  function giftInCart(cart){
+    for(var i=0;i<cart.items.length;i++){
+      if(ALL_IDS.indexOf(String(cart.items[i].variant_id))>-1) return true;
+    }
+    return false;
+  }
+
+  /* ── Check if cart has non-gift items >= MIN_VALUE ── */
+  function qualifyingTotal(cart){
+    var total=0;
+    for(var i=0;i<cart.items.length;i++){
+      if(ALL_IDS.indexOf(String(cart.items[i].variant_id))===-1){
+        total += cart.items[i].final_line_price;
+      }
+    }
+    return total/100;
+  }
+
+  /* ── Add gift ── */
+  function addGift(variantId,btn){
+    btn.disabled=true; btn.textContent='Adding...';
+    fetch('/cart/add.js',{
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body:'id='+variantId+'&quantity=1&properties[Gift]=Free+Gift'
+    }).then(function(r){return r.json();}).then(function(d){
+      if(d.status){
+        btn.disabled=false; btn.textContent='Error, please try again';
+      } else {
+        markAdded();
+        updateGiftKey();
+        btn.style.display='none';
+        document.getElementById('fso-modal-badge').style.display='block';
+        var bb=document.getElementById('fso-btn');
+        if(bb){bb.disabled=true;bb.textContent='✅ Added';}
+        var badge=document.getElementById('fso-banner-badge');
+        if(badge) badge.style.display='block';
+        refreshCartUI();
+        setTimeout(hideGiftControls, 1000); // hide controls after cart renders
+        setTimeout(closeModal,2000);
+      }
+    }).catch(function(){ btn.disabled=false; btn.textContent='Error, please try again'; });
+  }
+
+  /* ── Remove gift ── */
+  function removeGift(cart, cb){
+    if(!cart){ getCart(function(c){ removeGift(c,cb); }); return; }
+    var found=false;
+    for(var i=0;i<cart.items.length;i++){
+      if(ALL_IDS.indexOf(String(cart.items[i].variant_id))>-1){
+        found=true;
+        fetch('/cart/change.js',{
+          method:'POST',
+          headers:{'Content-Type':'application/x-www-form-urlencoded'},
+          body:'id='+cart.items[i].key+'&quantity=0'
+        }).then(function(){
+          clearAdded();
+          refreshCartUI();
+          if(cb) cb();
+        });
+        break;
+      }
+    }
+    if(!found){ clearAdded(); if(cb) cb(); }
+  }
+
+  /* ── Hide +/- controls: find gift row by "Free Gift" property text ── */
+  var fsoObserver = null;
+
+  function hideGiftControls(){
+    // Walk every element looking for the one whose text is exactly "Free Gift"
+    // That's the property value we set when adding — guaranteed unique identifier
+    var allEls = document.querySelectorAll('*');
+    for(var i=0;i<allEls.length;i++){
+      var el = allEls[i];
+      if(el.children.length > 0) continue; // leaf nodes only
+      if(el.textContent.trim() !== 'Free Gift') continue;
+
+      // Found it — walk up max 12 levels to find the cart row
+      var row = el.parentElement;
+      for(var j=0;j<12;j++){
+        if(!row) break;
+        // The row should contain a qty input or +/- button
+        var hasQty = row.querySelector('input[type="number"], button[name="plus"], button[name="minus"], .quantity__button, quantity-input');
+        if(hasQty){
+          // Replace entire quantity wrapper with a static badge
+          var qtyWrap = row.querySelector(
+            '.quantity-wrapper, .cart-item__quantity-wrapper, .js-qty-wrapper, '+
+            'quantity-input, .quantity, [class*="quantity"]'
+          );
+          if(qtyWrap && !qtyWrap.getAttribute('data-fso-locked')){
+            qtyWrap.setAttribute('data-fso-locked','1');
+            qtyWrap.style.cssText = 'pointer-events:none!important;opacity:1!important;';
+            // Hide all buttons inside
+            qtyWrap.querySelectorAll('button, a').forEach(function(b){
+              b.style.cssText = 'display:none!important;pointer-events:none!important;';
+              b.setAttribute('disabled','disabled');
+              b.onclick = function(e){ e.preventDefault(); e.stopPropagation(); return false; };
+            });
+            // Make input read-only
+            qtyWrap.querySelectorAll('input').forEach(function(inp){
+              inp.setAttribute('readonly','readonly');
+              inp.setAttribute('disabled','disabled');
+              inp.style.cssText = 'pointer-events:none!important;border:none!important;background:transparent!important;text-align:center;font-weight:700;';
+              inp.onchange = function(e){ e.preventDefault(); this.value=1; return false; };
+              inp.oninput  = function(e){ e.preventDefault(); this.value=1; return false; };
+            });
+            // Add 🎁 badge next to qty
+            if(!row.querySelector('.fso-qty-badge')){
+              var badge = document.createElement('span');
+              badge.className = 'fso-qty-badge';
+              badge.textContent = '🎁 Free Gift';
+              badge.style.cssText = 'font-size:11px;font-weight:700;color:#2ecc71;display:block;margin-top:4px;';
+              qtyWrap.parentNode.insertBefore(badge, qtyWrap.nextSibling);
+            }
+          }
+          break;
+        }
+        row = row.parentElement;
+      }
+    }
+  }
+
+  /* ── MutationObserver: re-apply hide whenever cart DOM changes ── */
+  function startObserver(){
+    if(fsoObserver) return;
+    fsoObserver = new MutationObserver(function(){
+      setTimeout(hideGiftControls, 100);
+    });
+    fsoObserver.observe(document.body, {childList:true, subtree:true});
+  }
+
+  function syncBannerBtn(){
+    var btn=document.getElementById('fso-btn');
+    if(!btn) return;
+    if(wasAdded()){
+      btn.disabled=true; btn.textContent='✅ Added';
+      var badge=document.getElementById('fso-banner-badge');
+      if(badge) badge.style.display='block';
+    } else {
+      btn.disabled=false; btn.textContent='Claim Free Gift';
+      var badge2=document.getElementById('fso-banner-badge');
+      if(badge2) badge2.style.display='none';
+    }
+  }
+
+  /* ── Modal ── */
+  var selSize=null,selColor=null;
+  function openModal(){
+    selSize=null;selColor=null;
+    document.querySelectorAll('.fso-opt').forEach(function(b){b.classList.remove('selected');});
+    var cb=document.getElementById('fso-confirm-btn');
+    cb.disabled=true;cb.style.display='block';cb.textContent='Select size & color to continue';
+    document.getElementById('fso-modal-badge').style.display='none';
+    document.getElementById('fso-modal').style.display='block';
+  }
+  function closeModal(){ document.getElementById('fso-modal').style.display='none'; }
+  function updateConfirmBtn(){
+    var btn=document.getElementById('fso-confirm-btn');
+    if(selSize&&selColor){ btn.disabled=false; btn.textContent='Add '+selSize+' / '+selColor+' — Free!'; }
+    else { btn.disabled=true; btn.textContent='Select size & color to continue'; }
+  }
+
+  /* ── Banner ── */
+  function buildBanner(){
+    var root=document.getElementById('free-socks-offer-root'); if(!root) return;
+    root.innerHTML=
+      '<div id="free-socks-banner">'+
+        '<button class="fso-close" id="fso-banner-close">✕</button>'+
+        '<div class="fso-title">🎁 Free Gift Unlocked!</div>'+
+        '<div class="fso-sub">Spend over '+C.MIN_VALUE+' '+C.CURRENCY+' &amp; get a free pair of socks</div>'+
+        '<div class="fso-row">'+
+          '<div><div class="fso-timer-label">⏳ Offer expires in</div>'+
+          '<div class="fso-timer" id="fso-timer">--:--:--</div></div>'+
+          '<button class="fso-btn" id="fso-btn">Claim Free Gift</button>'+
+        '</div>'+
+        '<div class="fso-badge" id="fso-banner-badge" style="display:none;">✅ Free socks added to your cart!</div>'+
+      '</div>';
+    document.getElementById('fso-banner-close').onclick=function(){
+      dismissed=true;
+      document.getElementById('free-socks-banner').style.display='none';
+    };
+    document.getElementById('fso-btn').onclick=function(){
+      if(!wasAdded()) openModal();
+    };
+  }
+
+  /* ── Progress ── */
+  function buildProgress(){
+    if(document.getElementById('fso-progress-wrap')) return;
+    var el=document.querySelector(C.CART_SELECTOR); if(!el) return;
+    var w=document.createElement('div'); w.id='fso-progress-wrap';
+    el.insertAdjacentElement('beforebegin',w);
+  }
+  function updateProgress(total){
+    var w=document.getElementById('fso-progress-wrap'); if(!w) return;
+    if(total>=C.MIN_VALUE){w.style.display='none';return;}
+    var pct=Math.min(100,(total/C.MIN_VALUE)*100);
+    var need=(C.MIN_VALUE-total).toFixed(2);
+    w.style.display='block';
+    w.innerHTML='<div class="fso-prog-text">Add <strong>'+need+' '+C.CURRENCY+'</strong> more to unlock 🧦 a free pair of socks!</div>'+
+      '<div class="fso-bar-bg"><div class="fso-bar-fill" style="width:'+pct+'%"></div></div>';
+  }
+
+  function tick(){
+    var rem=timeLeft();
+    var el=document.getElementById('fso-timer'); if(el) el.textContent=fmt(rem);
+    if(rem<=0){ clearInterval(timerInt); hideBanner(); getCart(function(c){removeGift(c,null);}); }
+  }
+  function hideBanner(){ var b=document.getElementById('free-socks-banner'); if(b) b.style.display='none'; }
+
+  /* ── Main check ── */
+  function check(){
+    getCart(function(cart){
+      if(!cart) return;
+
+      var total=qualifyingTotal(cart); // total WITHOUT gift items
+
+      // 1. sync LS_ADDED with reality
+      if(wasAdded()&&!giftInCart(cart)){
+        clearAdded(); // user removed gift manually → allow claim again
+      }
+
+      // 2. lock qty
+      lockGiftQty(cart);
+
+      // 3. update progress bar
+      updateProgress(total);
+
+      // 4. if total dropped below min → remove gift & hide banner
+      if(total<C.MIN_VALUE){
+        hideBanner();
+        if(giftInCart(cart)) removeGift(cart,null);
+        active=false;
+        return;
+      }
+
+      // 5. qualifying cart
+      if(!getStart()) setStart();
+      if(expired()){ hideBanner(); if(giftInCart(cart)) removeGift(cart,null); return; }
+
+      if(!active){
+        active=true; buildBanner(); buildProgress();
+        clearInterval(timerInt); timerInt=setInterval(tick,1000); tick();
+      }
+
+      syncBannerBtn();
+      if(!dismissed){ var b=document.getElementById('free-socks-banner'); if(b) b.style.display='block'; }
+    });
+  }
+
+  /* ── Run immediately on script load ── */
+  getCart(function(cart){ if(cart){ lockGiftQty(cart); updateGiftKey(); } });
+
+  /* ── Init ── */
+  document.addEventListener('DOMContentLoaded',function(){
+    document.getElementById('fso-modal-close').onclick=closeModal;
+    document.getElementById('fso-modal-overlay').onclick=closeModal;
+
+    document.getElementById('fso-sizes').addEventListener('click',function(e){
+      var btn=e.target.closest('.fso-opt'); if(!btn) return;
+      document.querySelectorAll('#fso-sizes .fso-opt').forEach(function(b){b.classList.remove('selected');});
+      btn.classList.add('selected'); selSize=btn.dataset.size; updateConfirmBtn();
+    });
+    document.getElementById('fso-colors').addEventListener('click',function(e){
+      var btn=e.target.closest('.fso-opt'); if(!btn) return;
+      document.querySelectorAll('#fso-colors .fso-opt').forEach(function(b){b.classList.remove('selected');});
+      btn.classList.add('selected'); selColor=btn.dataset.color; updateConfirmBtn();
+    });
+    document.getElementById('fso-confirm-btn').onclick=function(){
+      if(!selSize||!selColor) return;
+      var vid=VARIANTS[selSize+'/'+selColor];
+      if(!vid){alert('Combination not available');return;}
+      addGift(vid,this);
+    };
+
+    buildProgress();
+    check();
+    startObserver();
+    hideGiftControls();
+    document.addEventListener('cart:updated',check);
+    setInterval(function(){ check(); hideGiftControls(); }, 2000);
+    hideGiftControls(); // run immediately on load
+  });
+})();
+</script>
