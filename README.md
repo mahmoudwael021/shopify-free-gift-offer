@@ -96,12 +96,18 @@ var C = {
 
 ```liquid
 {% render 'free-socks-offer' %}
+{% if template == 'product' and product.handle == 'free-socks' %}
+  <script>window.location.replace('/');</script>
+{% endif %}
 ```
 
 So it looks like this:
 
 ```liquid
   {% render 'free-socks-offer' %}
+  {% if template == 'product' and product.handle == 'free-socks' %}
+  <script>window.location.replace('/');</script>
+  {% endif %}
 </body>
 ```
 
